@@ -50,7 +50,7 @@ func Error(w http.ResponseWriter, r *http.Request, err error, code int) {
 		err = fmt.Errorf("nil err")
 	}
 	logErr := err
-	errorMsgJSON, err := json.Marshal(domain.ErrorResponse{Message: err.Error()})
+	errorMsgJSON, err := json.Marshal(domain.MessageResponse{Message: err.Error()})
 	if err != nil {
 		log.Println(err)
 	} else {

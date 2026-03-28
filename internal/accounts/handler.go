@@ -37,7 +37,12 @@ func (h *handler) CreateAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: make call to service layer h.service.CreateAccount()
+	if err := h.service.CreateAccount(reqBody.GetAccountRequestFromCreateAccountRequest()); err != nil {
+		api.Error(w, r, err, 0)
+		return
+	}
+
+	api.SuccessJsonWithStatusCode(w, r, domain.MessageResponse{Message: "account created successfully"}, http.StatusCreated)
 }
 
 func (h *handler) GetAccount(w http.ResponseWriter, r *http.Request) {
@@ -47,5 +52,11 @@ func (h *handler) GetAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: make call to service layer h.service.GetAccount()
+	accountInfo, err := h.service.GetAccount(accountId)
+	if err != nil {
+		api.Error(w, r, err, 0)
+		return
+	}
+
+	api.SuccessJson(w, r, accountInfo)
 }
