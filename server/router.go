@@ -11,8 +11,8 @@ func RegisterAndServeRouter(server Server) error {
 
 	mux := http.NewServeMux()
 
-	accounts.RegisterRoutes(mux)
-	transactions.RegisterRoutes(mux)
+	accounts.RegisterRoutes(mux, server.accountsHandler)
+	transactions.RegisterRoutes(mux, server.transactionsHandler)
 
 	log.Printf("Application server staring on port %v", server.config.Port)
 

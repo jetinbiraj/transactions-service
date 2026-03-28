@@ -10,15 +10,15 @@ type Config struct {
 }
 
 type Server struct {
-	config          Config
-	accountsHandler accounts.Handler
-	transactions    transactions.Handler
+	config              Config
+	accountsHandler     accounts.Handler
+	transactionsHandler transactions.Handler
 }
 
 func NewServer(config Config, accountsHandler accounts.Handler, transactionsHandler transactions.Handler) Server {
 	return Server{
-		config:          config,
-		accountsHandler: accountsHandler,
-		transactions:    transactionsHandler,
+		config:              config,
+		accountsHandler:     accountsHandler,
+		transactionsHandler: transactionsHandler,
 	}
 }
