@@ -25,6 +25,6 @@ func StartTransactionsService() error {
 
 func ApplicationServer() server.Server {
 	return server.NewServer(config.ServerConfig(),
-		accounts.NewHandler(accounts.NewService()),
-		transactions.NewHandler(transactions.NewService()))
+		accounts.NewHandler(accounts.NewService(accounts.NewRepository())),
+		transactions.NewHandler(transactions.NewService(transactions.NewRepository())))
 }

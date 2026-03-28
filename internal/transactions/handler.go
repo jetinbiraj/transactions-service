@@ -35,6 +35,10 @@ func (h handler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		api.Error(w, r, err, http.StatusBadRequest)
 		return
 	}
+	if err := h.service.CreateTransaction(reqBody.GetTransactionRequestFromCreateTransactionRequest()); err != nil {
+		api.Error(w, r, err, 0)
+		return
+	}
 
-	// TODO: make call to service layer h.service.CreateTransaction()
+	api.SuccessJsonWithStatusCode(w, r, domain.MessageResponse{Message: "transaction created successfully"}, http.StatusCreated)
 }
