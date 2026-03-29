@@ -9,37 +9,35 @@ import (
 	"transactions-service/domain"
 )
 
-func SuccessJsonWithStatusCode(w http.ResponseWriter, r *http.Request, data interface{}, statusCode int) {
-	w.WriteHeader(statusCode)
-	SuccessJson(w, r, data)
-}
-
-func SuccessJson(w http.ResponseWriter, r *http.Request, data interface{}) {
+func SuccessJson(w http.ResponseWriter, r *http.Request, data interface{}, statusCode int, logEnabled bool) {
 	jsonMsg, err := json.Marshal(data)
 	if err != nil {
-		Error(w, r, fmt.Errorf("serialising response failed: %w", err), 500)
+		Error(w, r, fmt.Errorf("serialising response failed: %w", err), 500, logEnabled)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	Success(w, r, jsonMsg)
+	Success(w, r, jsonMsg, statusCode, logEnabled)
 }
 
-func Success(w http.ResponseWriter, r *http.Request, jsonMsg []byte) {
+func Success(w http.ResponseWriter, r *http.Request, jsonMsg []byte, statusCode int, logEnabled bool) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	if statusCode == 0 {
+		statusCode = http.StatusOK
+	}
+
+	w.WriteHeader(statusCode)
 	if _, err := w.Write(jsonMsg); err != nil {
 		log.Printf("Error writing response: %v", err)
 	}
 
-	log.Printf(
-		"%s %s %s 200",
-		r.Method,
-		r.RequestURI,
-		r.RemoteAddr,
-	)
+	if logEnabled {
+		logSuccessResponse(r, statusCode)
+	}
 }
 
-func Error(w http.ResponseWriter, r *http.Request, err error, code int) {
+func Error(w http.ResponseWriter, r *http.Request, err error, code int, logEnabled bool) {
 	if code == 0 {
 		code = toHTTPStatusCode(err)
 	}
@@ -59,14 +57,9 @@ func Error(w http.ResponseWriter, r *http.Request, err error, code int) {
 		}
 	}
 
-	log.Printf(
-		"%s %s %s %d %s",
-		r.Method,
-		r.RequestURI,
-		r.RemoteAddr,
-		code,
-		logErr.Error(),
-	)
+	if logEnabled {
+		logErrorResponse(r, code, logErr)
+	}
 }
 
 func toHTTPStatusCode(err error) int {
@@ -78,4 +71,25 @@ func toHTTPStatusCode(err error) int {
 	default:
 		return http.StatusInternalServerError
 	}
+}
+
+func logSuccessResponse(r *http.Request, statusCode int) {
+	log.Printf(
+		"%s %s %s %d",
+		r.Method,
+		r.RequestURI,
+		r.RemoteAddr,
+		statusCode,
+	)
+}
+
+func logErrorResponse(r *http.Request, statusCode int, logErr error) {
+	log.Printf(
+		"%s %s %s %d %s",
+		r.Method,
+		r.RequestURI,
+		r.RemoteAddr,
+		statusCode,
+		logErr.Error(),
+	)
 }

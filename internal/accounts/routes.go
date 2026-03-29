@@ -1,8 +1,11 @@
 package accounts
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+)
 
-func RegisterRoutes(mux *http.ServeMux, handler Handler) {
+func RegisterRoutes(mux *http.ServeMux, handler *Handler) {
 	mux.HandleFunc("POST /accounts", handler.CreateAccount)
-	mux.HandleFunc("GET /accounts/{accountId}", handler.GetAccount)
+	mux.HandleFunc(fmt.Sprintf("GET /accounts/{%v}", handler.accountId), handler.GetAccount)
 }

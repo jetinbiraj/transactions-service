@@ -32,3 +32,7 @@ func ServerConfig() server.Config {
 		Port: registry.GetString("SERVER_PORT"),
 	}
 }
+
+func IsLogEnabled() bool {
+	return registry.GetBool("LOG_ENABLED")
+}

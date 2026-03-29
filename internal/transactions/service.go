@@ -1,6 +1,9 @@
 package transactions
 
-import "time"
+import (
+	"time"
+	"transactions-service/domain"
+)
 
 type Service interface {
 	CreateTransaction(transactionRequest Transaction) error
@@ -12,10 +15,15 @@ type service struct {
 
 var _ Service = &service{}
 
-func NewService(repository Repository) Service {
+func NewService(repository Repository) (Service, error) {
+
+	if repository == nil {
+		return nil, domain.ErrNoRepo
+	}
+
 	return &service{
 		repository: repository,
-	}
+	}, nil
 }
 
 func (s *service) CreateTransaction(transaction Transaction) error {
