@@ -1,8 +1,8 @@
 package accounts
 
 type Service interface {
-	CreateAccount(accountRequest AccountRequest) error
-	GetAccount(accountId string) (AccountInformation, error)
+	Save(accountRequest Account) error
+	GetById(accountId int64) (AccountInformationResponse, error)
 }
 
 type service struct {
@@ -17,10 +17,19 @@ func NewService(repository Repository) Service {
 	}
 }
 
-func (s *service) CreateAccount(accountRequest AccountRequest) error {
-	return s.repository.CreateAccount(accountRequest)
+func (s *service) Save(accountRequest Account) error {
+	return s.repository.Save(accountRequest)
 }
 
-func (s *service) GetAccount(accountId string) (AccountInformation, error) {
-	return s.repository.GetAccount(accountId)
+func (s *service) GetById(accountId int64) (AccountInformationResponse, error) {
+
+	account, err := s.repository.GetById(accountId)
+	if err != nil {
+		return AccountInformationResponse{}, err
+	}
+
+	return AccountInformationResponse{
+		AccountId:      accountId,
+		DocumentNumber: account.DocumentNumber,
+	}, nil
 }

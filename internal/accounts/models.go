@@ -4,17 +4,17 @@ type CreateAccountRequest struct {
 	DocumentNumber string `json:"document_number"`
 }
 
-type AccountRequest struct {
+type Account struct {
 	DocumentNumber string `json:"document_number"`
 }
 
-type AccountInformation struct {
-	AccountId      int    `json:"account_id"`
+type AccountInformationResponse struct {
+	AccountId      int64  `json:"account_id"`
 	DocumentNumber string `json:"document_number"`
 }
 
-func (r CreateAccountRequest) GetAccountRequestFromCreateAccountRequest() AccountRequest {
-	return AccountRequest{
+func (r CreateAccountRequest) AccountFromCreateAccountRequest() Account {
+	return Account{
 		DocumentNumber: r.DocumentNumber,
 	}
 }
