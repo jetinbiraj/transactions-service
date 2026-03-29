@@ -2,7 +2,9 @@ package accounts
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
+	"strconv"
 	"transactions-service/domain"
 	"transactions-service/internal/utils/api"
 )
@@ -37,7 +39,7 @@ func (h *handler) CreateAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.service.CreateAccount(reqBody.GetAccountRequestFromCreateAccountRequest()); err != nil {
+	if err := h.service.Save(reqBody.AccountFromCreateAccountRequest()); err != nil {
 		api.Error(w, r, err, 0)
 		return
 	}
@@ -51,8 +53,13 @@ func (h *handler) GetAccount(w http.ResponseWriter, r *http.Request) {
 		api.Error(w, r, err, http.StatusBadRequest)
 		return
 	}
+	id, err := strconv.ParseInt(accountId, 10, 64)
+	if err != nil || id <= 0 {
+		api.Error(w, r, errors.New("invalid account_id"), http.StatusBadRequest)
+		return
+	}
 
-	accountInfo, err := h.service.GetAccount(accountId)
+	accountInfo, err := h.service.GetById(id)
 	if err != nil {
 		api.Error(w, r, err, 0)
 		return

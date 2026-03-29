@@ -1,7 +1,9 @@
 package transactions
 
+import "time"
+
 type Service interface {
-	CreateTransaction(transactionRequest TransactionRequest) error
+	CreateTransaction(transactionRequest Transaction) error
 }
 
 type service struct {
@@ -16,8 +18,7 @@ func NewService(repository Repository) Service {
 	}
 }
 
-func (s *service) CreateTransaction(transactionRequest TransactionRequest) error {
-
-	// TODO: Implement me!
-	return nil
+func (s *service) CreateTransaction(transaction Transaction) error {
+	transaction.EventDate = time.Now().UTC()
+	return s.repository.Save(transaction)
 }

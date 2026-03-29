@@ -3,7 +3,6 @@ package accounts
 import (
 	"errors"
 	"regexp"
-	"strconv"
 	"strings"
 )
 
@@ -30,11 +29,6 @@ func validateDocumentNumber(doc string) error {
 func validateAccountId(accountId string) error {
 	if accountId == "" {
 		return errors.New("account_id is required")
-	}
-
-	id, err := strconv.ParseInt(accountId, 10, 64)
-	if err != nil || id <= 0 {
-		return errors.New("invalid account_id")
 	}
 
 	return nil

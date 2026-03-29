@@ -10,8 +10,8 @@ const (
 )
 
 var OperationTypeMap = map[int]OperationType{
-	0: Purchase,
-	1: InstallmentPurchase,
-	2: Withdrawal,
-	3: CreditVoucher,
+	1: Purchase,
+	2: InstallmentPurchase,
+	3: Withdrawal,
+	4: CreditVoucher,
 }

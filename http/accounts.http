@@ -1,6 +1,10 @@
 ### Create Account
 POST localhost:8080/accounts
 
+{
+"document_number": "12345678900"
+}
+
 
 
 ### Get Account

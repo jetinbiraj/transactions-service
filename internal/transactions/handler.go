@@ -35,7 +35,7 @@ func (h handler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		api.Error(w, r, err, http.StatusBadRequest)
 		return
 	}
-	if err := h.service.CreateTransaction(reqBody.GetTransactionRequestFromCreateTransactionRequest()); err != nil {
+	if err := h.service.CreateTransaction(reqBody.TransactionFromCreateTransactionRequest()); err != nil {
 		api.Error(w, r, err, 0)
 		return
 	}
