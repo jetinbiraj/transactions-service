@@ -11,11 +11,11 @@ type Config struct {
 
 type Server struct {
 	config              Config
-	accountsHandler     accounts.Handler
-	transactionsHandler transactions.Handler
+	accountsHandler     *accounts.Handler
+	transactionsHandler *transactions.Handler
 }
 
-func NewServer(config Config, accountsHandler accounts.Handler, transactionsHandler transactions.Handler) Server {
+func NewServer(config Config, accountsHandler *accounts.Handler, transactionsHandler *transactions.Handler) Server {
 	return Server{
 		config:              config,
 		accountsHandler:     accountsHandler,

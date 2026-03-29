@@ -1,8 +1,10 @@
 package accounts
 
+import "transactions-service/domain"
+
 type Service interface {
-	Save(accountRequest Account) error
-	GetById(accountId int64) (AccountInformationResponse, error)
+	CreateAccount(accountRequest Account) error
+	GetAccount(accountId int64) (AccountInformationResponse, error)
 }
 
 type service struct {
@@ -11,17 +13,22 @@ type service struct {
 
 var _ Service = &service{}
 
-func NewService(repository Repository) Service {
+func NewService(repository Repository) (Service, error) {
+
+	if repository == nil {
+		return nil, domain.ErrNoRepo
+	}
+
 	return &service{
 		repository: repository,
-	}
+	}, nil
 }
 
-func (s *service) Save(accountRequest Account) error {
+func (s *service) CreateAccount(accountRequest Account) error {
 	return s.repository.Save(accountRequest)
 }
 
-func (s *service) GetById(accountId int64) (AccountInformationResponse, error) {
+func (s *service) GetAccount(accountId int64) (AccountInformationResponse, error) {
 
 	account, err := s.repository.GetById(accountId)
 	if err != nil {
