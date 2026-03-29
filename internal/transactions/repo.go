@@ -8,6 +8,7 @@ import (
 
 // Satisfy the Repository interface in order to use any database
 
+//go:generate mockgen -source=./repo.go -destination=./repo_mocks_test.go -package=transactions
 type Repository interface {
 	Save(transaction Transaction) error
 }

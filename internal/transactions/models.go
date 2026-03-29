@@ -15,10 +15,10 @@ type Transaction struct {
 	EventDate       time.Time
 }
 
-func (r CreateTransactionRequest) TransactionFromCreateTransactionRequest() Transaction {
-	return Transaction{
-		AccountId:       r.AccountId,
-		OperationTypeId: OperationTypeMap[r.OperationTypeId],
-		Amount:          r.Amount,
-	}
-}
+//func (r CreateTransactionRequest) TransactionFromCreateTransactionRequest() Transaction {
+//	return Transaction{
+//		AccountId:       r.AccountId,
+//		OperationTypeId: OperationTypeMap[r.OperationTypeId],
+//		Amount:          r.Amount,
+//	}
+//}

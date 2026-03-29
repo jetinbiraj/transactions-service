@@ -5,6 +5,7 @@ import (
 	"transactions-service/domain"
 )
 
+//go:generate mockgen -source=./service.go -destination=./service_mocks_test.go -package=transactions
 type Service interface {
 	CreateTransaction(transactionRequest Transaction) error
 }

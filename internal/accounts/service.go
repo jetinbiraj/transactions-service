@@ -2,6 +2,7 @@ package accounts
 
 import "transactions-service/domain"
 
+//go:generate mockgen -source=./service.go -destination=./service_mocks_test.go -package=accounts
 type Service interface {
 	CreateAccount(accountRequest Account) error
 	GetAccount(accountId int64) (AccountInformationResponse, error)
