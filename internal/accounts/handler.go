@@ -2,7 +2,6 @@ package accounts
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 	"strconv"
 	"transactions-service/domain"
@@ -10,10 +9,11 @@ import (
 )
 
 type Handler struct {
-	accountId  string
 	logEnabled bool
 	service    Service
 }
+
+const pathParamAccountId = "accountId"
 
 func NewHandler(logEnabled bool, service Service) (*Handler, error) {
 
@@ -22,7 +22,6 @@ func NewHandler(logEnabled bool, service Service) (*Handler, error) {
 	}
 
 	return &Handler{
-		accountId:  "accountId",
 		logEnabled: logEnabled,
 		service:    service,
 	}, nil
@@ -41,7 +40,9 @@ func (h *Handler) CreateAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.service.CreateAccount(reqBody.AccountFromCreateAccountRequest()); err != nil {
+	if err := h.service.CreateAccount(Account{
+		DocumentNumber: reqBody.DocumentNumber,
+	}); err != nil {
 		api.Error(w, r, err, 0, h.logEnabled)
 		return
 	}
@@ -51,17 +52,13 @@ func (h *Handler) CreateAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetAccount(w http.ResponseWriter, r *http.Request) {
-	accountId := r.PathValue(h.accountId)
+	accountId := r.PathValue(pathParamAccountId)
 	if err := validateAccountId(accountId); err != nil {
 		api.Error(w, r, err, http.StatusBadRequest, h.logEnabled)
 		return
 	}
-	id, err := strconv.ParseInt(accountId, 10, 64)
-	if err != nil || id <= 0 {
-		api.Error(w, r, errors.New("invalid account_id"), http.StatusBadRequest, h.logEnabled)
-		return
-	}
 
+	id, _ := strconv.ParseInt(accountId, 10, 64)
 	accountInfo, err := h.service.GetAccount(id)
 	if err != nil {
 		api.Error(w, r, err, 0, h.logEnabled)

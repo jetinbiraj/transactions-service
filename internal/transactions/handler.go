@@ -36,7 +36,11 @@ func (h Handler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		api.Error(w, r, err, http.StatusBadRequest, h.logEnabled)
 		return
 	}
-	if err := h.service.CreateTransaction(reqBody.TransactionFromCreateTransactionRequest()); err != nil {
+	if err := h.service.CreateTransaction(Transaction{
+		AccountId:       reqBody.AccountId,
+		OperationTypeId: OperationTypeMap[reqBody.OperationTypeId],
+		Amount:          reqBody.Amount,
+	}); err != nil {
 		api.Error(w, r, err, 0, h.logEnabled)
 		return
 	}

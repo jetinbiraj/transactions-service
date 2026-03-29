@@ -12,9 +12,3 @@ type AccountInformationResponse struct {
 	AccountId      int64  `json:"account_id"`
 	DocumentNumber string `json:"document_number"`
 }
-
-func (r CreateAccountRequest) AccountFromCreateAccountRequest() Account {
-	return Account{
-		DocumentNumber: r.DocumentNumber,
-	}
-}
