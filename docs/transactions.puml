@@ -1,0 +1,17 @@
+@startuml
+
+!theme mars
+
+title Transactions
+
+actor "User" as user
+participant TransactionsService as service
+database "Transactions Table" as transactionsTable
+
+==Create Transactions==
+    user -> service: POST /transactions
+    service -> service: Validate transactions creation request
+    service -> transactionsTable: Save Transaction
+    service --> user: http status 201
+
+@enduml

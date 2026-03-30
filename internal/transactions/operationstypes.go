@@ -1,5 +1,6 @@
 package transactions
 
+// OperationType represents all supported operation types for the transaction
 type OperationType int
 
 const (

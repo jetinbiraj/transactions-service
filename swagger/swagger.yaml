@@ -1,0 +1,130 @@
+definitions:
+  accounts.AccountInformationResponse:
+    properties:
+      account_id:
+        type: integer
+      document_number:
+        type: string
+    type: object
+  accounts.CreateAccountRequest:
+    properties:
+      document_number:
+        example: "12345678900"
+        format: long
+        maxLength: 11
+        minLength: 11
+        type: string
+    type: object
+  transactions.CreateTransactionRequest:
+    properties:
+      account_id:
+        example: 1
+        format: integer
+        type: integer
+      amount:
+        example: 123.45
+        format: number
+        type: number
+      operation_type_id:
+        enum:
+        - 1
+        - 2
+        - 3
+        - 4
+        example: 4
+        format: integer
+        type: integer
+    type: object
+info:
+  contact:
+    email: birajdarjk1106@gmail.com
+    name: Jetin Biraj
+  description: Exposed APIs for accounts and transactions related operations
+  title: Transactions Service
+  version: v1
+paths:
+  /accounts:
+    post:
+      consumes:
+      - application/json
+      description: Create account
+      parameters:
+      - description: create account request body
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/accounts.CreateAccountRequest'
+      responses:
+        "201":
+          description: CREATED
+          schema:
+            type: string
+        "400":
+          description: BAD REQUEST, if request body is invalid
+          schema:
+            type: string
+        "500":
+          description: INTERNAL SERVER ERROR, server side failure
+          schema:
+            type: string
+      tags:
+      - accounts
+  /accounts/{account_id}:
+    get:
+      description: Get account information
+      parameters:
+      - description: account_id
+        in: path
+        name: account_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/accounts.AccountInformationResponse'
+        "400":
+          description: BAD REQUEST, if account_id is invalid
+          schema:
+            type: string
+        "404":
+          description: NOT FOUND, if account does not exist for account_id
+          schema:
+            type: string
+        "500":
+          description: INTERNAL SERVER ERROR, server side failure
+          schema:
+            type: string
+      tags:
+      - accounts
+  /transactions:
+    post:
+      consumes:
+      - application/json
+      description: Create transaction entry
+      parameters:
+      - description: create transaction request body
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/transactions.CreateTransactionRequest'
+      responses:
+        "201":
+          description: CREATED
+          schema:
+            type: string
+        "400":
+          description: BAD REQUEST, if request body is invalid
+          schema:
+            type: string
+        "500":
+          description: INTERNAL SERVER ERROR, server side failure
+          schema:
+            type: string
+      tags:
+      - transactions
+swagger: "2.0"

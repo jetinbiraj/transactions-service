@@ -27,12 +27,14 @@ func Set() error {
 	return nil
 }
 
+// ServerConfig populates and returns all server configs
 func ServerConfig() server.Config {
 	return server.Config{
 		Port: registry.GetString("SERVER_PORT"),
 	}
 }
 
+// IsLogEnabled checks if logs are enabled by configuration
 func IsLogEnabled() bool {
 	return registry.GetBool("LOG_ENABLED")
 }

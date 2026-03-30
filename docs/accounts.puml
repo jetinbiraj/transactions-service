@@ -1,0 +1,29 @@
+@startuml
+
+!theme mars
+
+title Accounts
+
+actor "User" as user
+participant TransactionsService as service
+database "Accounts Table" as accountsTable
+
+==Create Account==
+    user -> service: POST /accounts
+    service -> service: Validate account creation request
+    service -> accountsTable: Save Account
+    service --> user: http status 201
+
+==Get Account==
+    user -> service: GET /accounts/{account_id}
+    service -> accountsTable: Fetch account for the id
+
+    alt "if account does not exists for the id"
+        accountsTable --> service: Account not found
+        service --> user: http status 404
+    else "if account present for the id"
+        accountsTable --> service: Account for the id
+        service --> user: http status 200
+    end
+
+@enduml
