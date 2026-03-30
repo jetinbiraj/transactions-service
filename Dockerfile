@@ -23,7 +23,7 @@ WORKDIR /app
 
 # Copy binary from builder
 COPY --from=builder /app/app .
-COPY --from=builder /app/config.yaml ./config.yaml
+COPY --from=builder /app/config ./config
 
 # Expose port (adjust if different)
 EXPOSE 8080
