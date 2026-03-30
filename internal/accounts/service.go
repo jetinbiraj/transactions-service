@@ -25,10 +25,12 @@ func NewService(repository Repository) (Service, error) {
 	}, nil
 }
 
+// CreateAccount creates a new account for a given document number.
 func (s *service) CreateAccount(accountRequest Account) error {
 	return s.repository.Save(accountRequest)
 }
 
+// GetAccount gets the Account associated with provided accountId.
 func (s *service) GetAccount(accountId int64) (AccountInformationResponse, error) {
 
 	account, err := s.repository.GetById(accountId)

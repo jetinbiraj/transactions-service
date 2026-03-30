@@ -63,6 +63,7 @@ func loadTestData() map[int64]*Transaction {
 	}
 }
 
+// Save saves the new transaction entry in the memory store
 func (r *memoryStore) Save(transaction Transaction) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()

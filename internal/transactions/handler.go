@@ -24,7 +24,17 @@ func NewHandler(logEnabled bool, service Service) (*Handler, error) {
 	}, nil
 }
 
-func (h Handler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
+// CreateTransaction handles the HTTP POST request to create a new transaction.
+//
+//	@Tags			transactions
+//	@Description	Create transaction entry
+//	@Accept			json
+//	@Param			RequestBody	body		CreateTransactionRequest	true	"create transaction request body"
+//	@Success		201			{string}	string						"CREATED"
+//	@failure		400			{string}	string						"BAD REQUEST, if request body is invalid"
+//	@failure		500			{string}	string						"INTERNAL SERVER ERROR, server side failure"
+//	@Router			/transactions [post]
+func (h *Handler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	var reqBody CreateTransactionRequest
 	if err := json.NewDecoder(r.Body).Decode(&reqBody); err != nil {
 		api.Error(w, r, domain.ErrInvalidRequestBody, 0, h.logEnabled)

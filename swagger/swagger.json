@@ -1,0 +1,195 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Exposed APIs for accounts and transactions related operations",
+        "title": "Transactions Service",
+        "contact": {
+            "name": "Jetin Biraj",
+            "email": "birajdarjk1106@gmail.com"
+        },
+        "version": "v1"
+    },
+    "paths": {
+        "/accounts": {
+            "post": {
+                "description": "Create account",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "accounts"
+                ],
+                "parameters": [
+                    {
+                        "description": "create account request body",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/accounts.CreateAccountRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "CREATED",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "BAD REQUEST, if request body is invalid",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "INTERNAL SERVER ERROR, server side failure",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/accounts/{account_id}": {
+            "get": {
+                "description": "Get account information",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "accounts"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "account_id",
+                        "name": "account_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/accounts.AccountInformationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "BAD REQUEST, if account_id is invalid",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "NOT FOUND, if account does not exist for account_id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "INTERNAL SERVER ERROR, server side failure",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions": {
+            "post": {
+                "description": "Create transaction entry",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "parameters": [
+                    {
+                        "description": "create transaction request body",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/transactions.CreateTransactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "CREATED",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "BAD REQUEST, if request body is invalid",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "INTERNAL SERVER ERROR, server side failure",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "accounts.AccountInformationResponse": {
+            "type": "object",
+            "properties": {
+                "account_id": {
+                    "type": "integer"
+                },
+                "document_number": {
+                    "type": "string"
+                }
+            }
+        },
+        "accounts.CreateAccountRequest": {
+            "type": "object",
+            "properties": {
+                "document_number": {
+                    "type": "string",
+                    "format": "long",
+                    "maxLength": 11,
+                    "minLength": 11,
+                    "example": "12345678900"
+                }
+            }
+        },
+        "transactions.CreateTransactionRequest": {
+            "type": "object",
+            "properties": {
+                "account_id": {
+                    "type": "integer",
+                    "format": "integer",
+                    "example": 1
+                },
+                "amount": {
+                    "type": "number",
+                    "format": "number",
+                    "example": 123.45
+                },
+                "operation_type_id": {
+                    "type": "integer",
+                    "format": "integer",
+                    "enum": [
+                        1,
+                        2,
+                        3,
+                        4
+                    ],
+                    "example": 4
+                }
+            }
+        }
+    }
+}

@@ -27,6 +27,7 @@ func NewService(repository Repository) (Service, error) {
 	}, nil
 }
 
+// CreateTransaction pass the request to repo layer to save the new transaction
 func (s *service) CreateTransaction(transaction Transaction) error {
 	transaction.EventDate = time.Now().UTC()
 	return s.repository.Save(transaction)

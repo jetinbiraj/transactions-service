@@ -39,6 +39,7 @@ func loadTestData() map[int64]*Account {
 	}
 }
 
+// Save saves the new account in the memory store
 func (r *memoryStore) Save(account Account) error {
 
 	r.mu.Lock()
@@ -53,6 +54,7 @@ func (r *memoryStore) Save(account Account) error {
 	return nil
 }
 
+// GetById returns Account if there exists account for accountId otherwise returns domain.ErrNotFound error
 func (r *memoryStore) GetById(accountId int64) (*Account, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
