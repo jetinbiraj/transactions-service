@@ -1,12 +1,10 @@
-# ---------- Build Stage ----------
+
 FROM golang:1.26-alpine AS builder
 
 WORKDIR /app
 
-# Install git (needed for some dependencies)
 RUN apk add --no-cache git
 
-# Cache dependencies
 COPY go.mod go.sum ./
 RUN go mod download
 
@@ -25,7 +23,6 @@ WORKDIR /app
 COPY --from=builder /app/app .
 COPY --from=builder /app/config ./config
 
-# Expose port (adjust if different)
 EXPOSE 8080
 
 # Run binary
