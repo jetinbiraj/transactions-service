@@ -80,6 +80,7 @@ func TestHandler_CreateAccount(t *testing.T) {
 		name           string
 		fields         fields
 		wantStatusCode int
+		wantResponse   AccountInformationResponse
 	}{
 		{
 			name:           "request body is nil",
@@ -88,18 +89,18 @@ func TestHandler_CreateAccount(t *testing.T) {
 		{
 			name: "request body is invalid",
 			fields: fields{
-				requestBodyFilePath: "create_transaction_request_invalid.json",
+				requestBodyFilePath: "create_account_request_invalid.json",
 			},
 			wantStatusCode: http.StatusBadRequest,
 		},
 		{
 			name: "error from service call",
 			fields: fields{
-				requestBodyFilePath: "create_transaction_request_valid.json",
+				requestBodyFilePath: "create_account_request_valid.json",
 				mockServiceFn: func(mockService *MockService) {
 					mockService.EXPECT().CreateAccount(Account{
 						DocumentNumber: "12345678901",
-					}).Return(errors.New("create account error"))
+					}).Return(AccountInformationResponse{}, errors.New("create account error"))
 				},
 			},
 			wantStatusCode: http.StatusInternalServerError,
@@ -107,14 +108,21 @@ func TestHandler_CreateAccount(t *testing.T) {
 		{
 			name: "account creation success",
 			fields: fields{
-				requestBodyFilePath: "create_transaction_request_valid.json",
+				requestBodyFilePath: "create_account_request_valid.json",
 				mockServiceFn: func(mockService *MockService) {
 					mockService.EXPECT().CreateAccount(Account{
 						DocumentNumber: "12345678901",
-					}).Return(nil)
+					}).Return(AccountInformationResponse{
+						AccountId:      1,
+						DocumentNumber: "12345",
+					}, nil)
 				},
 			},
 			wantStatusCode: http.StatusCreated,
+			wantResponse: AccountInformationResponse{
+				AccountId:      1,
+				DocumentNumber: "12345",
+			},
 		},
 	}
 	for _, tt := range tests {
@@ -147,6 +155,14 @@ func TestHandler_CreateAccount(t *testing.T) {
 
 			if resp.StatusCode != tt.wantStatusCode {
 				t.Fatalf("CreateAccount() Status ErrorCode = %v, want %v", resp.StatusCode, tt.wantStatusCode)
+				return
+			}
+
+			var respBody AccountInformationResponse
+			require.NoError(t, json.NewDecoder(resp.Body).Decode(&respBody))
+
+			if !reflect.DeepEqual(respBody, tt.wantResponse) {
+				t.Errorf("CreateAccount() got = %v, want %v", respBody, tt.wantResponse)
 			}
 		})
 	}

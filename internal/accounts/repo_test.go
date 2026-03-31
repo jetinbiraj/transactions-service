@@ -44,12 +44,12 @@ func Test_memoryStore_Save(t *testing.T) {
 		account Account
 	}
 	tests := []struct {
-		name                 string
-		fields               fields
-		args                 args
-		wantErr              bool
-		wantCurrentAccountId int64
-		wantAccountsLength   int
+		name               string
+		fields             fields
+		args               args
+		wantErr            bool
+		wantAccountId      int64
+		wantAccountsLength int
 	}{
 		{
 			name: "save account",
@@ -60,9 +60,9 @@ func Test_memoryStore_Save(t *testing.T) {
 			args: args{
 				account: Account{DocumentNumber: testDocumentNumber},
 			},
-			wantErr:              false,
-			wantAccountsLength:   1,
-			wantCurrentAccountId: 1,
+			wantErr:            false,
+			wantAccountsLength: 1,
+			wantAccountId:      1,
 		},
 	}
 	for _, tt := range tests {
@@ -71,12 +71,14 @@ func Test_memoryStore_Save(t *testing.T) {
 				currentAccountId: tt.fields.currentAccountId,
 				accounts:         tt.fields.accounts,
 			}
-			if err := r.Save(tt.args.account); (err != nil) != tt.wantErr {
+
+			got, err := r.Save(tt.args.account)
+			if (err != nil) != tt.wantErr {
 				t.Errorf("Save() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
-			if tt.wantCurrentAccountId != r.currentAccountId {
-				t.Errorf("Save() currentAccountId = %v, wantCurrentAccountId %v", r.currentAccountId, tt.wantCurrentAccountId)
+			if got != tt.wantAccountId {
+				t.Errorf("Save() got = %v, wantAccountId %v", got, tt.wantAccountId)
 			}
 
 			if tt.wantAccountsLength != len(r.accounts) {

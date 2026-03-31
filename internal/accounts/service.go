@@ -4,7 +4,7 @@ import "transactions-service/domain"
 
 //go:generate mockgen -source=./service.go -destination=./service_mocks_test.go -package=accounts
 type Service interface {
-	CreateAccount(accountRequest Account) error
+	CreateAccount(accountRequest Account) (AccountInformationResponse, error)
 	GetAccount(accountId int64) (AccountInformationResponse, error)
 }
 
@@ -25,9 +25,18 @@ func NewService(repository Repository) (Service, error) {
 	}, nil
 }
 
-// CreateAccount creates a new account for a given document number.
-func (s *service) CreateAccount(accountRequest Account) error {
-	return s.repository.Save(accountRequest)
+// CreateAccount creates a new account for a given document number and returns created account information
+func (s *service) CreateAccount(accountRequest Account) (AccountInformationResponse, error) {
+
+	createdAccountNumber, err := s.repository.Save(accountRequest)
+	if err != nil {
+		return AccountInformationResponse{}, err
+	}
+
+	return AccountInformationResponse{
+		AccountId:      createdAccountNumber,
+		DocumentNumber: accountRequest.DocumentNumber,
+	}, nil
 }
 
 // GetAccount gets the Account associated with provided accountId.

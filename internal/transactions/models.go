@@ -9,6 +9,15 @@ type CreateTransactionRequest struct {
 	Amount          float64 `json:"amount" format:"number" example:"123.45"`
 }
 
+// TransactionResponse represents the response body for create transaction request
+type TransactionResponse struct {
+	TransactionId   int64     `json:"transaction_id"`
+	AccountId       int64     `json:"account_id"`
+	OperationTypeId int       `json:"operation_type_id"`
+	Amount          float64   `json:"amount"`
+	EventDate       time.Time `json:"event_date"`
+}
+
 // Transaction represents data transfer object in service and db entity for transactions
 type Transaction struct {
 	AccountId       int64

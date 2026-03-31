@@ -40,11 +40,12 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 }
 
 // CreateTransaction mocks base method.
-func (m *MockService) CreateTransaction(transactionRequest Transaction) error {
+func (m *MockService) CreateTransaction(transactionRequest Transaction) (TransactionResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateTransaction", transactionRequest)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(TransactionResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // CreateTransaction indicates an expected call of CreateTransaction.

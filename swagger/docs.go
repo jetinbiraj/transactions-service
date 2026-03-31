@@ -40,27 +40,27 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "201": {
-                        "description": "CREATED",
+                        "description": "Created",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/accounts.AccountInformationResponse"
                         }
                     },
                     "400": {
                         "description": "BAD REQUEST, if request body is invalid",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "INTERNAL SERVER ERROR, server side failure",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     }
                 }
             }
         },
-        "/accounts/{account_id}": {
+        "/accounts/{accountId}": {
             "get": {
                 "description": "Get account information",
                 "produces": [
@@ -72,8 +72,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "account_id",
-                        "name": "account_id",
+                        "description": "accountId",
+                        "name": "accountId",
                         "in": "path",
                         "required": true
                     }
@@ -86,21 +86,21 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "BAD REQUEST, if account_id is invalid",
+                        "description": "BAD REQUEST, if accountId is invalid",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     },
                     "404": {
-                        "description": "NOT FOUND, if account does not exist for account_id",
+                        "description": "NOT FOUND, if account does not exist for accountId",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "INTERNAL SERVER ERROR, server side failure",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     }
                 }
@@ -128,21 +128,21 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "201": {
-                        "description": "CREATED",
+                        "description": "Created",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/transactions.TransactionResponse"
                         }
                     },
                     "400": {
                         "description": "BAD REQUEST, if request body is invalid",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "INTERNAL SERVER ERROR, server side failure",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     }
                 }
@@ -173,6 +173,14 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
         "transactions.CreateTransactionRequest": {
             "type": "object",
             "properties": {
@@ -196,6 +204,26 @@ const docTemplate = `{
                         4
                     ],
                     "example": 4
+                }
+            }
+        },
+        "transactions.TransactionResponse": {
+            "type": "object",
+            "properties": {
+                "account_id": {
+                    "type": "integer"
+                },
+                "amount": {
+                    "type": "number"
+                },
+                "event_date": {
+                    "type": "string"
+                },
+                "operation_type_id": {
+                    "type": "integer"
+                },
+                "transaction_id": {
+                    "type": "integer"
                 }
             }
         }

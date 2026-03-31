@@ -60,12 +60,13 @@ func Test_service_CreateAccount(t *testing.T) {
 		fields  fields
 		args    args
 		wantErr bool
+		want    AccountInformationResponse
 	}{
 		{
 			name: "account creation fail due to save error",
 			fields: fields{func(mockRepository *MockRepository) {
 				mockRepository.EXPECT().Save(Account{}).Return(
-					errors.New("save error"),
+					int64(1), errors.New("save error"),
 				)
 			}},
 			args: args{
@@ -76,14 +77,18 @@ func Test_service_CreateAccount(t *testing.T) {
 		{
 			name: "account creation success",
 			fields: fields{func(mockRepository *MockRepository) {
-				mockRepository.EXPECT().Save(Account{}).Return(
-					nil,
-				)
+				mockRepository.EXPECT().Save(Account{DocumentNumber: "12345"}).Return(int64(1), nil)
 			}},
 			args: args{
-				accountRequest: Account{},
+				accountRequest: Account{
+					DocumentNumber: "12345",
+				},
 			},
 			wantErr: false,
+			want: AccountInformationResponse{
+				AccountId:      1,
+				DocumentNumber: "12345",
+			},
 		},
 	}
 	for _, tt := range tests {
@@ -99,8 +104,15 @@ func Test_service_CreateAccount(t *testing.T) {
 			s := &service{
 				repository: mockRepo,
 			}
-			if err := s.CreateAccount(tt.args.accountRequest); (err != nil) != tt.wantErr {
+
+			got, err := s.CreateAccount(tt.args.accountRequest)
+			if (err != nil) != tt.wantErr {
 				t.Errorf("CreateAccount() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("CreateAccount() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

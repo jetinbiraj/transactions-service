@@ -30,9 +30,9 @@ func NewHandler(logEnabled bool, service Service) (*Handler, error) {
 //	@Description	Create transaction entry
 //	@Accept			json
 //	@Param			RequestBody	body		CreateTransactionRequest	true	"create transaction request body"
-//	@Success		201			{string}	string						"CREATED"
-//	@failure		400			{string}	string						"BAD REQUEST, if request body is invalid"
-//	@failure		500			{string}	string						"INTERNAL SERVER ERROR, server side failure"
+//	@Success		201			{object}	TransactionResponse
+//	@failure		400			{object}	domain.ErrorResponse	"BAD REQUEST, if request body is invalid"
+//	@failure		500			{object}	domain.ErrorResponse	"INTERNAL SERVER ERROR, server side failure"
 //	@Router			/transactions [post]
 func (h *Handler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	var reqBody CreateTransactionRequest
@@ -46,15 +46,16 @@ func (h *Handler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		api.Error(w, r, err, http.StatusBadRequest, h.logEnabled)
 		return
 	}
-	if err := h.service.CreateTransaction(Transaction{
+	createdTransaction, err := h.service.CreateTransaction(Transaction{
 		AccountId:       reqBody.AccountId,
 		OperationTypeId: OperationTypeMap[reqBody.OperationTypeId],
 		Amount:          reqBody.Amount,
-	}); err != nil {
+	})
+
+	if err != nil {
 		api.Error(w, r, err, 0, h.logEnabled)
 		return
 	}
 
-	api.SuccessJson(w, r, domain.MessageResponse{Message: "transaction created successfully"},
-		http.StatusCreated, h.logEnabled)
+	api.SuccessJson(w, r, createdTransaction, http.StatusCreated, h.logEnabled)
 }

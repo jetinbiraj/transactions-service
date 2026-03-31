@@ -10,7 +10,7 @@ import (
 
 //go:generate mockgen -source=./repo.go -destination=./repo_mocks_test.go -package=transactions
 type Repository interface {
-	Save(transaction Transaction) error
+	Save(transaction Transaction) (int64, error)
 }
 
 type memoryStore struct {
@@ -63,8 +63,8 @@ func loadTestData() map[int64]*Transaction {
 	}
 }
 
-// Save saves the new transaction entry in the memory store
-func (r *memoryStore) Save(transaction Transaction) error {
+// Save saves the new transaction entry in the memory store and returns the created transaction id
+func (r *memoryStore) Save(transaction Transaction) (int64, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -72,5 +72,5 @@ func (r *memoryStore) Save(transaction Transaction) error {
 
 	r.transactions[r.currentTransactionId] = &transaction
 
-	return nil
+	return r.currentTransactionId, nil
 }

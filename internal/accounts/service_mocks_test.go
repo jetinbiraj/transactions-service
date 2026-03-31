@@ -40,11 +40,12 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 }
 
 // CreateAccount mocks base method.
-func (m *MockService) CreateAccount(accountRequest Account) error {
+func (m *MockService) CreateAccount(accountRequest Account) (AccountInformationResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateAccount", accountRequest)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(AccountInformationResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // CreateAccount indicates an expected call of CreateAccount.

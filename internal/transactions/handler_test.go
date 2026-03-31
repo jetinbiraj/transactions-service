@@ -2,6 +2,7 @@ package transactions
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -9,6 +10,7 @@ import (
 	"os"
 	"reflect"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
@@ -78,6 +80,7 @@ func TestHandler_CreateTransaction(t *testing.T) {
 		name           string
 		fields         fields
 		wantStatusCode int
+		wantResponse   TransactionResponse
 	}{
 		{
 			name:           "request body is nil",
@@ -99,7 +102,7 @@ func TestHandler_CreateTransaction(t *testing.T) {
 						AccountId:       1,
 						OperationTypeId: 0,
 						Amount:          -50.0,
-					}).Return(errors.New("create account error"))
+					}).Return(TransactionResponse{}, errors.New("create account error"))
 				},
 			},
 			wantStatusCode: http.StatusInternalServerError,
@@ -111,12 +114,25 @@ func TestHandler_CreateTransaction(t *testing.T) {
 				mockServiceFn: func(mockService *MockService) {
 					mockService.EXPECT().CreateTransaction(Transaction{
 						AccountId:       1,
-						OperationTypeId: 0,
+						OperationTypeId: Purchase,
 						Amount:          -50.0,
-					}).Return(nil)
+					}).Return(TransactionResponse{
+						TransactionId:   1,
+						AccountId:       1,
+						OperationTypeId: OperationId[Purchase],
+						Amount:          -50.0,
+						EventDate:       time.Time{},
+					}, nil)
 				},
 			},
 			wantStatusCode: http.StatusCreated,
+			wantResponse: TransactionResponse{
+				TransactionId:   1,
+				AccountId:       1,
+				OperationTypeId: OperationId[Purchase],
+				Amount:          -50.0,
+				EventDate:       time.Time{},
+			},
 		},
 	}
 	for _, tt := range tests {
@@ -148,7 +164,15 @@ func TestHandler_CreateTransaction(t *testing.T) {
 			require.NoError(t, err)
 
 			if resp.StatusCode != tt.wantStatusCode {
-				t.Fatalf("CreateAccount() Status ErrorCode = %v, want %v", resp.StatusCode, tt.wantStatusCode)
+				t.Fatalf("CreateTransaction() Status ErrorCode = %v, want %v", resp.StatusCode, tt.wantStatusCode)
+				return
+			}
+
+			var respBody TransactionResponse
+			require.NoError(t, json.NewDecoder(resp.Body).Decode(&respBody))
+
+			if !reflect.DeepEqual(respBody, tt.wantResponse) {
+				t.Errorf("CreateTransaction() got = %v, want %v", respBody, tt.wantResponse)
 			}
 		})
 	}

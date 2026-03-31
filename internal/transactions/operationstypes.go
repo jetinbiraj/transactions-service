@@ -16,3 +16,10 @@ var OperationTypeMap = map[int]OperationType{
 	3: Withdrawal,
 	4: CreditVoucher,
 }
+
+var OperationId = map[OperationType]int{
+	Purchase:            1,
+	InstallmentPurchase: 2,
+	Withdrawal:          3,
+	CreditVoucher:       4,
+}
