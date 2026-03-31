@@ -62,8 +62,8 @@ Open terminal and `cd cmd`
 - Generate swagger doc :- `swag init -o ../swagger -d ./,../internal/transactions,../internal/accounts --pd`
 - Swaggo official GitHub :- https://github.com/swaggo/swag
 
-
 ## Architecture Overview
+
 The service follows a clean layered architecture:
 
 ### Layers
@@ -95,25 +95,27 @@ The service follows a clean layered architecture:
 - `event_date` (timestamp, UTC)
 
 ## Business Rules
+
 ### Account
+
 - `document_number` must:
-  - be non-empty
-  - contain only digits
+    - be non-empty
+    - contain only digits
 
 ### Transaction
+
 - `account_id` must exist
 - `operation_type_id` must be one of:
-  - 1: Normal Purchase
-  - 2: Installment Purchase
-  - 3: Withdrawal
-  - 4: Credit Voucher
+    - 1: Normal Purchase
+    - 2: Installment Purchase
+    - 3: Withdrawal
+    - 4: Credit Voucher
 
 - Amount rules:
-  - For operation types 1, 2, 3 → amount must be **negative**
-  - For operation type 4 → amount must be **positive**
+    - For operation types 1, 2, 3 → amount must be **negative**
+    - For operation type 4 → amount must be **positive**
 
 - `event_date` is generated automatically in UTC
-
 
 ## API Endpoints
 
@@ -125,7 +127,6 @@ The service follows a clean layered architecture:
 ### Transactions
 
 - `POST /transactions` → Create transaction
-
 
 ---
 
@@ -153,7 +154,6 @@ Configuration is loaded using Viper from: config/config.yaml
 - Application will fail to start if config file is missing
 - In Docker, config directory is bundled inside the container
 
-
 ## Docker Notes
 
 - Multi-stage build is used for a minimal runtime image
@@ -166,26 +166,32 @@ curl http://localhost:8080/health
 ```
 
 # Trade-offs Section
+
 ## Design Decisions & Trade-offs
 
 ### In-Memory Storage
+
 - Used for simplicity and faster execution
 - Simulates indexed access using maps (O(1) lookups)
 
 ### Why not a database?
+
 - Keeps focus on API design and business logic
 - Repository abstraction allows easy replacement with DB
 
 ### Time Handling
+
 - All timestamps stored in UTC
 - Generated at service layer
 
 ### Validation
+
 - Explicit validation functions used instead of external libraries
 - Provides better control over business rules
 
-
 ## Future Improvements
+
+- Restrict user to have limited number of accounts per documentId
 - Add persistent storage (PostgreSQL)
 - Add authentication/authorization
 - Add rate limiting

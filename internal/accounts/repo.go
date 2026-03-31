@@ -21,7 +21,7 @@ type memoryStore struct {
 
 var _ Repository = &memoryStore{}
 
-func NewRepository() Repository {
+func NewMemoryStore() Repository {
 
 	testData := loadTestData()
 
