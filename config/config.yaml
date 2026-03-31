@@ -5,3 +5,13 @@ LOG_ENABLED: true
 
 # DB Configs
 DB_NAME: "postgres"
+
+POSTGRES_HOST: "localhost"
+POSTGRES_PORT: 5432
+POSTGRES_USER: "postgres"
+POSTGRES_PASSWORD: "postgres" # Meant to be for local development, do not store and commit passwords and secrets to git or prod
+POSTGRES_DB_NAME: "postgres"
+POSTGRES_SSL_MODE: "disable"
+POSTGRES_MAX_OPEN_CONNS: 25
+POSTGRES_MAX_IDLE_CONNS: 25
+POSTGRES_CONN_MAX_LIFETIME: "5m"

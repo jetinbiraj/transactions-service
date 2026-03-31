@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 	"transactions-service/config"
+	"transactions-service/db"
 	_ "transactions-service/swagger"
 )
 
@@ -58,6 +59,12 @@ func run() error {
 
 		if err = httpServer.Shutdown(shutdownCtx); err != nil {
 			return err
+		}
+
+		if db.Pg != nil {
+			if err = db.Pg.Close(); err != nil {
+				return err
+			}
 		}
 
 		err = <-serverErr

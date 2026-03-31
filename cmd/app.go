@@ -3,9 +3,14 @@ package main
 import (
 	"net/http"
 	"transactions-service/config"
+	"transactions-service/db"
 	"transactions-service/internal/accounts"
 	"transactions-service/internal/transactions"
 	"transactions-service/server"
+)
+
+const (
+	dbPostgres = "postgres"
 )
 
 func buildHTTPServer() (*http.Server, error) {
@@ -19,15 +24,42 @@ func buildHTTPServer() (*http.Server, error) {
 
 func applicationServer() (server.Server, error) {
 
-	logEnabled := config.IsLogEnabled()
-	db := config.GetDBName()
+	var accountsRepository accounts.Repository
+	var transactionsRepository transactions.Repository
 
-	accountsHandler, err := getAccountsHandler(logEnabled, db)
+	if config.GetDBName() == dbPostgres {
+
+		err := db.OpenPostgres(config.GetPostgresConfig())
+		if err != nil {
+			return server.Server{}, err
+		}
+		accountsRepository = accounts.NewPostgresStore(db.Pg)
+		transactionsRepository = transactions.NewPostgresStore(db.Pg)
+
+		db.Init()
+
+	} else {
+		accountsRepository = accounts.NewMemoryStore()
+		transactionsRepository = transactions.NewMemoryStore()
+	}
+
+	accountService, err := accounts.NewService(accountsRepository)
+	if err != nil {
+		return server.Server{}, err
+	}
+	transactionService, err := transactions.NewService(transactionsRepository)
 	if err != nil {
 		return server.Server{}, err
 	}
 
-	transactionsHandler, err := getTransactionsHandler(logEnabled, db)
+	logEnabled := config.IsLogEnabled()
+
+	accountsHandler, err := accounts.NewHandler(logEnabled, accountService)
+	if err != nil {
+		return server.Server{}, err
+	}
+
+	transactionsHandler, err := transactions.NewHandler(logEnabled, transactionService)
 	if err != nil {
 		return server.Server{}, err
 	}
@@ -37,47 +69,4 @@ func applicationServer() (server.Server, error) {
 			transactionsHandler,
 		),
 		nil
-}
-
-func getAccountsHandler(logEnabled bool, db string) (*accounts.Handler, error) {
-
-	var repository accounts.Repository
-	if db == "postgres" {
-		// TODO: Add postgres as persistent storage
-	} else {
-		repository = accounts.NewMemoryStore()
-	}
-
-	accountService, err := accounts.NewService(repository)
-	if err != nil {
-		return nil, err
-	}
-
-	accountsHandler, err := accounts.NewHandler(logEnabled, accountService)
-	if err != nil {
-		return nil, err
-	}
-
-	return accountsHandler, nil
-}
-
-func getTransactionsHandler(logEnabled bool, db string) (*transactions.Handler, error) {
-	var repository transactions.Repository
-	if db == "postgres" {
-		// TODO: Add postgres as persistent storage
-	} else {
-		repository = transactions.NewMemoryStore()
-	}
-
-	transactionService, err := transactions.NewService(repository)
-	if err != nil {
-		return nil, err
-	}
-
-	transactionsHandler, err := transactions.NewHandler(logEnabled, transactionService)
-	if err != nil {
-		return nil, err
-	}
-
-	return transactionsHandler, nil
 }
