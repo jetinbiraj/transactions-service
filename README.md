@@ -8,16 +8,38 @@ A simple microservice to manage accounts and financial transactions.
 - Git :- `brew install git`
 - Docker :- `brew install docker`
 - Colima :- `brew install colima`
+- Docker Compose :- `brew install docker-compose`
 
 ## Clone Application
 
 `git clone https://github.com/jetinbiraj/transactions-service.git && cd transactions-service`
 
+## Database Setup
+
+- Database is optional and postgres db is enabled by config, if you do not wish to setup postgres simply comment out the
+  line
+  `DB_NAME` in config.yaml, application will use then in-memory database
+- Follow the steps for postgres setup
+  ```shell
+  # Pull the docker image if does not exists and run
+  docker run --name postgres \                                        
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=postgres \
+  -p 5432:5432 \
+  -d postgres
+  
+  # Once the docker image is pulled, start the container using the command:
+  docker start postgres
+  ```
+
 ## Build and Run Application
 
 1. Start the docker instance using colima :- `colima start`
 2. Build the application :- `docker build -t transactions-service .`
-3. Run application docker image :- `docker run -p 8080:8080 transactions-service`
+3. Run application docker image only if you're not using postgres:- `docker run -p 8080:8080 transactions-service`
+4. Run the application using docker compose with postgres enabled by config, It spins off both application and postgres
+   db together :- `docker-compose up`
+5. To stop the docker compose, since no storage attached to container, the data will be lost :- `docker compose down`
 
 ## Service Interaction
 
@@ -135,7 +157,7 @@ The service follows a clean layered architecture:
 ```md
 ## Running Tests
 
-Run unit tests:
+Run unit & integration test:
 
 ```bash
    go test ./...
