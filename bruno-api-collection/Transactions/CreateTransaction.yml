@@ -1,0 +1,23 @@
+info:
+  name: CreateTransaction
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://localhost:8080/transactions
+  body:
+    type: json
+    data: |-
+      {
+      "account_id": 1,
+      "operation_type_id": 1,
+      "amount": -55
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

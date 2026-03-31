@@ -1,0 +1,21 @@
+info:
+  name: CreateAccount
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://localhost:8080/accounts
+  body:
+    type: json
+    data: |-
+      {
+      "document_number": "12345678900"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
