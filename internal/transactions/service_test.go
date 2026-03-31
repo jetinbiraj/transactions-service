@@ -4,6 +4,7 @@ import (
 	"errors"
 	"reflect"
 	"testing"
+	"time"
 
 	"go.uber.org/mock/gomock"
 )
@@ -60,12 +61,13 @@ func Test_service_CreateTransaction(t *testing.T) {
 		fields  fields
 		args    args
 		wantErr bool
+		want    TransactionResponse
 	}{
 		{
 			name: "transaction creation fail due to save error",
 			fields: fields{func(mockRepository *MockRepository) {
 				mockRepository.EXPECT().Save(gomock.Any()).Return(
-					errors.New("save error"),
+					int64(1), errors.New("save error"),
 				)
 			}},
 			args: args{
@@ -77,13 +79,25 @@ func Test_service_CreateTransaction(t *testing.T) {
 			name: "transaction creation success",
 			fields: fields{func(mockRepository *MockRepository) {
 				mockRepository.EXPECT().Save(gomock.Any()).Return(
-					nil,
+					int64(1), nil,
 				)
 			}},
 			args: args{
-				transaction: Transaction{},
+				transaction: Transaction{
+					AccountId:       1,
+					OperationTypeId: Purchase,
+					Amount:          -50.0,
+					EventDate:       time.Time{},
+				},
 			},
 			wantErr: false,
+			want: TransactionResponse{
+				TransactionId:   1,
+				AccountId:       1,
+				OperationTypeId: OperationId[Purchase],
+				Amount:          -50.0,
+				EventDate:       time.Time{},
+			},
 		},
 	}
 	for _, tt := range tests {
@@ -99,8 +113,16 @@ func Test_service_CreateTransaction(t *testing.T) {
 			s := &service{
 				repository: mockRepo,
 			}
-			if err := s.CreateTransaction(tt.args.transaction); (err != nil) != tt.wantErr {
+
+			got, err := s.CreateTransaction(tt.args.transaction)
+			if (err != nil) != tt.wantErr {
 				t.Errorf("CreateTransaction() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+
+			if got.TransactionId != tt.want.TransactionId || got.AccountId != tt.want.AccountId ||
+				got.OperationTypeId != tt.want.OperationTypeId || got.Amount != tt.want.Amount {
+				t.Errorf("CreateTransaction() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -55,11 +55,12 @@ func (mr *MockRepositoryMockRecorder) GetById(accountId any) *gomock.Call {
 }
 
 // Save mocks base method.
-func (m *MockRepository) Save(accountRequest Account) error {
+func (m *MockRepository) Save(accountRequest Account) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Save", accountRequest)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // Save indicates an expected call of Save.

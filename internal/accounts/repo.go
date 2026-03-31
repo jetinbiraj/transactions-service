@@ -9,7 +9,7 @@ import (
 
 //go:generate mockgen -source=./repo.go -destination=./repo_mocks_test.go -package=accounts
 type Repository interface {
-	Save(accountRequest Account) error
+	Save(accountRequest Account) (int64, error)
 	GetById(accountId int64) (*Account, error)
 }
 
@@ -39,8 +39,8 @@ func loadTestData() map[int64]*Account {
 	}
 }
 
-// Save saves the new account in the memory store
-func (r *memoryStore) Save(account Account) error {
+// Save saves the new account in the memory store and returns the created account number
+func (r *memoryStore) Save(account Account) (int64, error) {
 
 	r.mu.Lock()
 	defer r.mu.Unlock()
@@ -49,9 +49,7 @@ func (r *memoryStore) Save(account Account) error {
 
 	r.accounts[r.currentAccountId] = &account
 
-	// TODO: Assumption: multiple accounts possible for same document number
-
-	return nil
+	return r.currentAccountId, nil
 }
 
 // GetById returns Account if there exists account for accountId otherwise returns domain.ErrNotFound error

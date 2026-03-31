@@ -13,7 +13,7 @@ type Handler struct {
 	service    Service
 }
 
-const pathParamAccountId = "account_id"
+const pathParamAccountId = "accountId"
 
 func NewHandler(logEnabled bool, service Service) (*Handler, error) {
 
@@ -33,9 +33,9 @@ func NewHandler(logEnabled bool, service Service) (*Handler, error) {
 //	@Description	Create account
 //	@Accept			json
 //	@Param			RequestBody	body		CreateAccountRequest	true	"create account request body"
-//	@Success		201			{string}	string					"CREATED"
-//	@failure		400			{string}	string					"BAD REQUEST, if request body is invalid"
-//	@failure		500			{string}	string					"INTERNAL SERVER ERROR, server side failure"
+//	@Success		201			{object}	AccountInformationResponse
+//	@failure		400			{object}	domain.ErrorResponse	"BAD REQUEST, if request body is invalid"
+//	@failure		500			{object}	domain.ErrorResponse	"INTERNAL SERVER ERROR, server side failure"
 //	@Router			/accounts [post]
 func (h *Handler) CreateAccount(w http.ResponseWriter, r *http.Request) {
 	var reqBody CreateAccountRequest
@@ -50,28 +50,29 @@ func (h *Handler) CreateAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.service.CreateAccount(Account{
+	createdAccountInformation, err := h.service.CreateAccount(Account{
 		DocumentNumber: reqBody.DocumentNumber,
-	}); err != nil {
+	})
+	if err != nil {
 		api.Error(w, r, err, 0, h.logEnabled)
 		return
 	}
 
-	api.SuccessJson(w, r, domain.MessageResponse{Message: "account created successfully"},
+	api.SuccessJson(w, r, createdAccountInformation,
 		http.StatusCreated, h.logEnabled)
 }
 
-// GetAccount handles the HTTP GET request to get account information by account_id.
+// GetAccount handles the HTTP GET request to get account information by accountId.
 //
 //	@Tags			accounts
 //	@Description	Get account information
 //	@Produce		json
-//	@Param			account_id	path		integer	true	"account_id"
+//	@Param			accountId	path		integer	true	"accountId"
 //	@Success		200			{object}	AccountInformationResponse
-//	@failure		400			{string}	string	"BAD REQUEST, if account_id is invalid"
-//	@failure		404			{string}	string	"NOT FOUND, if account does not exist for account_id"
-//	@failure		500			{string}	string	"INTERNAL SERVER ERROR, server side failure"
-//	@Router			/accounts/{account_id} [get]
+//	@failure		400			{object}	domain.ErrorResponse	"BAD REQUEST, if accountId is invalid"
+//	@failure		404			{object}	domain.ErrorResponse	"NOT FOUND, if account does not exist for accountId"
+//	@failure		500			{object}	domain.ErrorResponse	"INTERNAL SERVER ERROR, server side failure"
+//	@Router			/accounts/{accountId} [get]
 func (h *Handler) GetAccount(w http.ResponseWriter, r *http.Request) {
 	accountId := r.PathValue(pathParamAccountId)
 	if err := validateAccountId(accountId); err != nil {

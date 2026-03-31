@@ -69,12 +69,12 @@ func Test_memoryStore_Save(t *testing.T) {
 		transaction Transaction
 	}
 	tests := []struct {
-		name                 string
-		fields               fields
-		args                 args
-		wantErr              bool
-		wantCurrentAccountId int64
-		wantAccountsLength   int
+		name               string
+		fields             fields
+		args               args
+		wantErr            bool
+		wantTransactionId  int64
+		wantAccountsLength int
 	}{
 		{
 			name: "save transaction",
@@ -90,9 +90,9 @@ func Test_memoryStore_Save(t *testing.T) {
 					EventDate:       time.Now().UTC(),
 				},
 			},
-			wantErr:              false,
-			wantAccountsLength:   1,
-			wantCurrentAccountId: 1,
+			wantErr:            false,
+			wantAccountsLength: 1,
+			wantTransactionId:  1,
 		},
 	}
 	for _, tt := range tests {
@@ -101,13 +101,13 @@ func Test_memoryStore_Save(t *testing.T) {
 				currentTransactionId: tt.fields.currentTransactionId,
 				transactions:         tt.fields.transactions,
 			}
-			if err := r.Save(tt.args.transaction); (err != nil) != tt.wantErr {
+			got, err := r.Save(tt.args.transaction)
+			if (err != nil) != tt.wantErr {
 				t.Errorf("Save() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
-			if tt.wantCurrentAccountId != r.currentTransactionId {
-				t.Errorf("Save() currentAccountId = %v, wantCurrentAccountId %v", r.currentTransactionId,
-					tt.wantCurrentAccountId)
+			if tt.wantTransactionId != got {
+				t.Errorf("Save() got = %v, wantTransactionId %v", got, tt.wantTransactionId)
 			}
 
 			if tt.wantAccountsLength != len(r.transactions) {

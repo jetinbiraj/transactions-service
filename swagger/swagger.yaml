@@ -15,6 +15,11 @@ definitions:
         minLength: 11
         type: string
     type: object
+  domain.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
   transactions.CreateTransactionRequest:
     properties:
       account_id:
@@ -33,6 +38,19 @@ definitions:
         - 4
         example: 4
         format: integer
+        type: integer
+    type: object
+  transactions.TransactionResponse:
+    properties:
+      account_id:
+        type: integer
+      amount:
+        type: number
+      event_date:
+        type: string
+      operation_type_id:
+        type: integer
+      transaction_id:
         type: integer
     type: object
 info:
@@ -57,26 +75,26 @@ paths:
           $ref: '#/definitions/accounts.CreateAccountRequest'
       responses:
         "201":
-          description: CREATED
+          description: Created
           schema:
-            type: string
+            $ref: '#/definitions/accounts.AccountInformationResponse'
         "400":
           description: BAD REQUEST, if request body is invalid
           schema:
-            type: string
+            $ref: '#/definitions/domain.ErrorResponse'
         "500":
           description: INTERNAL SERVER ERROR, server side failure
           schema:
-            type: string
+            $ref: '#/definitions/domain.ErrorResponse'
       tags:
       - accounts
-  /accounts/{account_id}:
+  /accounts/{accountId}:
     get:
       description: Get account information
       parameters:
-      - description: account_id
+      - description: accountId
         in: path
-        name: account_id
+        name: accountId
         required: true
         type: integer
       produces:
@@ -87,17 +105,17 @@ paths:
           schema:
             $ref: '#/definitions/accounts.AccountInformationResponse'
         "400":
-          description: BAD REQUEST, if account_id is invalid
+          description: BAD REQUEST, if accountId is invalid
           schema:
-            type: string
+            $ref: '#/definitions/domain.ErrorResponse'
         "404":
-          description: NOT FOUND, if account does not exist for account_id
+          description: NOT FOUND, if account does not exist for accountId
           schema:
-            type: string
+            $ref: '#/definitions/domain.ErrorResponse'
         "500":
           description: INTERNAL SERVER ERROR, server side failure
           schema:
-            type: string
+            $ref: '#/definitions/domain.ErrorResponse'
       tags:
       - accounts
   /transactions:
@@ -114,17 +132,17 @@ paths:
           $ref: '#/definitions/transactions.CreateTransactionRequest'
       responses:
         "201":
-          description: CREATED
+          description: Created
           schema:
-            type: string
+            $ref: '#/definitions/transactions.TransactionResponse'
         "400":
           description: BAD REQUEST, if request body is invalid
           schema:
-            type: string
+            $ref: '#/definitions/domain.ErrorResponse'
         "500":
           description: INTERNAL SERVER ERROR, server side failure
           schema:
-            type: string
+            $ref: '#/definitions/domain.ErrorResponse'
       tags:
       - transactions
 swagger: "2.0"
