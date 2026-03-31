@@ -214,7 +214,6 @@ curl http://localhost:8080/health
 ## Future Improvements
 
 - Restrict user to have limited number of accounts per documentId
-- Add persistent storage (PostgreSQL)
 - Add authentication/authorization
 - Add rate limiting
 - Add structured logging

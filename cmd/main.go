@@ -35,6 +35,12 @@ func run() error {
 		return err
 	}
 
+	defer func() {
+		if err = closePostgres(); err != nil {
+			log.Printf("error closing postgres: %v", err)
+		}
+	}()
+
 	serverErr := make(chan error, 1)
 	go func() {
 		log.Printf("Application server staring on port %v", httpServer.Addr)
@@ -61,12 +67,6 @@ func run() error {
 			return err
 		}
 
-		if db.Pg != nil {
-			if err = db.Pg.Close(); err != nil {
-				return err
-			}
-		}
-
 		err = <-serverErr
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {
 			return err
@@ -75,4 +75,11 @@ func run() error {
 		log.Printf("Server shutdown completed")
 		return nil
 	}
+}
+
+func closePostgres() error {
+	if db.Pg == nil {
+		return nil
+	}
+	return db.Pg.Close()
 }
