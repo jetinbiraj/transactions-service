@@ -39,7 +39,7 @@ func applicationServer() (server.Server, error) {
 }
 
 func getAccountsHandler(logEnabled bool) (*accounts.Handler, error) {
-	accountService, err := accounts.NewService(accounts.NewRepository())
+	accountService, err := accounts.NewService(accounts.NewMemoryStore())
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func getAccountsHandler(logEnabled bool) (*accounts.Handler, error) {
 }
 
 func getTransactionsHandler(logEnabled bool) (*transactions.Handler, error) {
-	transactionService, err := transactions.NewService(transactions.NewRepository())
+	transactionService, err := transactions.NewService(transactions.NewMemoryStore())
 	if err != nil {
 		return nil, err
 	}

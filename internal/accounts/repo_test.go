@@ -26,8 +26,8 @@ func TestNewRepository(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewRepository(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewRepository() = %v, want %v", got, tt.want)
+			if got := NewMemoryStore(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewMemoryStore() = %v, want %v", got, tt.want)
 			}
 		})
 	}
