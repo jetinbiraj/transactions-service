@@ -1,34 +1,23 @@
 package main
 
 import (
-	"log"
-	"time"
+	"net/http"
 	"transactions-service/config"
 	"transactions-service/internal/accounts"
 	"transactions-service/internal/transactions"
 	"transactions-service/server"
 )
 
-func StartTransactionsService() error {
-	startTime := time.Now()
-	if err := config.Set(); err != nil {
-		return err
-	}
-
-	appServer, err := ApplicationServer()
+func buildHTTPServer() (*http.Server, error) {
+	appServer, err := applicationServer()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	if err = server.RegisterAndServeRouter(appServer); err != nil {
-		return err
-	}
-
-	log.Printf("Set up took %vms", time.Since(startTime))
-	return nil
+	return server.NewHTTPServer(appServer), nil
 }
 
-func ApplicationServer() (server.Server, error) {
+func applicationServer() (server.Server, error) {
 
 	logEnabled := config.IsLogEnabled()
 
