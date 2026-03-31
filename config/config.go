@@ -38,3 +38,8 @@ func ServerConfig() server.Config {
 func IsLogEnabled() bool {
 	return registry.GetBool("LOG_ENABLED")
 }
+
+// GetDBName gets the name of the db from config
+func GetDBName() string {
+	return registry.GetString("DB_NAME")
+}

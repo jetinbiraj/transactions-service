@@ -2,3 +2,6 @@
 SERVER_PORT: ":8080"
 LOG_LEVEL: DEBUG
 LOG_ENABLED: true
+
+# DB Configs
+DB_NAME: "postgres"

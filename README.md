@@ -135,7 +135,7 @@ The service follows a clean layered architecture:
 ```md
 ## Running Tests
 
-Run unit tests:
+Run unit & integration test:
 
 ```bash
    go test ./...
